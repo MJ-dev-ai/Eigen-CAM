@@ -15,11 +15,9 @@ transform = transforms.Compose([transforms.Resize(256),
 
 model = models.mobilenet(num_classes=100)
 model_path = os.path.join(flags['model_root'],'model_state_dict.pt')
-model.load_state_dict(torch.load(model_path))
-test_dataset = datasets.cifar100(root=flags['data_root'],train=False,download=False)
+#model.load_state_dict(torch.load(model_path))
 eigencam = cam.eigenCAM(model,'cpu','model.features.18.0',transform)
-sample_path = os.path.join(flags['data_root'],'n01669191_46.JPEG')
-img = Image.open(sample_path)
+img = Image.open('n01669191_46.JPEG')
 heatmap = eigencam.get_heatmap(img)
 overlay = utils.visualize_CAM_heatmap(img,heatmap,alpha=0.4)
 
@@ -28,3 +26,6 @@ plt.figure()
 plt.imshow(overlay)
 plt.title('CAM')
 plt.show()
+
+import cv2
+cv2.imwrite('cam_output.jpg',overlay)
